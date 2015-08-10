@@ -1,0 +1,69 @@
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script><script type="text/javascript">
+
+var app = angular.module("propiedadesApp", []);
+app.service("nodesService", function($http, $q)
+ {
+  var deferred = $q.defer();
+  $http.get('/?q=json').then(function(data)
+    {
+    deferred.resolve(data);
+   });
+
+   this.getNodes = function()
+   {
+    return deferred.promise;
+   }
+ 
+ })
+
+.controller("nodesCtrl", function($scope, nodesService)
+{
+  var promise = nodesService.getNodes();
+  promise.then(function(data){
+   $scope.nodeData = data.data;
+
+   console.log($scope.nodeData);
+  });
+});
+
+</script>
+<p class="rtecenter"><label>Ingrese el t&eacute;rmino por el cual desea filtrar la b&uacute;squeda</label></p>
+<div class="mainContainer" data-ng-app="propiedadesApp">
+	<p class="rtecenter"><input data-ng-model="searchTeam" type="text" /></p>
+	<div data-ng-controller="nodesCtrl">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@</th>
+					<th>
+						Propiedades</th>
+					<th>
+						Provincia</th>
+					<th>
+						Cant&oacute;n</th>
+					<th>
+						Tipo de Negocio</th>
+					<th>
+						C&oacute;digo</th>
+				</tr>
+				<tr data-ng-repeat="item in nodeData.nodes | filter:searchTeam">
+					<td>
+						<a href="?q=node/{{item.node.nid}}">ver</a></td>
+					<td>
+						{{item.node.title}}</td>
+					<td>
+						{{item.node.field_provincia}}</td>
+					<td>
+						{{item.node.field_location}}</td>
+					<td>
+						{{item.node.field_business_type}}</td>
+					<td>
+						{{item.node.field_c_digo_de_propiedad}}</td>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+<p>&nbsp;</p>
